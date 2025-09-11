@@ -1,4 +1,17 @@
-#pragma once
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   BitcoinExchange.hpp                                :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ana-pper <ana-pper@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/11 15:34:08 by ana-pper          #+#    #+#             */
+/*   Updated: 2025/09/11 15:59:12 by ana-pper         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#ifndef BITCOIN_EXCHANGE_HPP
+#define BITCOIN_EXCHANGE_HPP
 
 #include <string>
 #include <map>
@@ -6,18 +19,19 @@
 #include <iostream>
 #include <sstream>
 #include <cstdlib>
+#include <stdexcept>
 
 #define BAD_INPUT_ERR           "Error: bad input => "
 #define INCORRECT_DATE_ERR      "Error: incorrect date => "
-#define YEAR_NOT_ON_DB_ERR      "Error: year is not at the database => "
 #define INCORRECT_MONTH_ERR     "Error: incorrect month => "
 #define INCORRECT_DAY_ERR       "Error: incorrect day => "
 #define INVALID_RATE_ERR        "Error: invalid rate => "
 #define NOT_A_POSITIVE_ERR      "Error: not a positive number."
 #define TOO_LARGE_ERR           "Error: too large a number."
-#define FILE_OPEN_ERR           "Error: could not open file"
+#define FILE_OPEN_ERR           "Error: could not open file."
 #define INTERNAL_DB_FILE        "./data.csv"
 #define INTERNAL_DB_ERR         "Error: fatal: could not open internal database file"
+#define NO_LOWER_DATE_ERR       "Error: no lower date in database."
 
 class BitcoinExchange {
 
@@ -27,13 +41,16 @@ class BitcoinExchange {
         BitcoinExchange& operator=(const BitcoinExchange& other);
         ~BitcoinExchange();
 
-        void readInternalDataBase(std::ifstream& internal_db);
+        void  readInternalDataBase(std::ifstream& internal_db);
         float getRateFromDataBase(const std::string& date) const;
 
         bool isDateInCorrectFormat(const std::string& date) const;
         bool isValidDate(const std::string& date) const;
-        bool isRateInCorrectFormat(const std::string &rate_str);
+        bool isRateInCorrectFormat(const std::string &rate_str) const;
 
     private:
         std::map<std::string, float> dataBase;
+        static bool isLeap(int year);
 };
+
+#endif

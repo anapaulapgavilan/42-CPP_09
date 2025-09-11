@@ -1,4 +1,17 @@
-#pragma once
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   RPN.hpp                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ana-pper <ana-pper@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/11 16:05:15 by ana-pper          #+#    #+#             */
+/*   Updated: 2025/09/11 16:09:29 by ana-pper         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#ifndef RPN_HPP
+#define RPN_HPP
 
 #include <string>
 #include <exception>
@@ -7,26 +20,20 @@
 #include <cctype>
 #include <cstdlib>
 #include <iostream>
-#include <string>
-
-#define ERROR_MSG_PREFIX "RPN: error: "
-#define ARGC_ERR         "invalid number of arguments"
-#define INVALID_EXPR_ERR "invalid expression"
 
 class RPN {
     public:
-
         static bool      valid_expression(const std::string& str);
         static long long calculate(const std::string& str);
 
         struct NoResultException : public std::exception {
-            NoResultException();
-            virtual const char* what() const throw();
+            NoResultException() {}
+            virtual const char* what() const throw() { return "Error"; }
         };
 
         struct DivisionByZeroException : public std::exception {
-            DivisionByZeroException();
-            virtual const char* what() const throw();
+            DivisionByZeroException() {}
+            virtual const char* what() const throw() { return "Error"; }
         };
 
     private:
@@ -35,3 +42,5 @@ class RPN {
         RPN& operator=(const RPN&);
         ~RPN();
 };
+
+#endif

@@ -1,59 +1,48 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   PmergeMe.cpp                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ana-pper <ana-pper@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/11 16:14:28 by ana-pper          #+#    #+#             */
+/*   Updated: 2025/09/11 16:38:23 by ana-pper         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "PmergeMe.hpp"
 
 void PmergeMe::generateJacobsthalIndices(int m, std::deque<int>& out) {
     out.clear();
-    // Jacobsthal sequence generation: J0=0, J1=1, J2=1, then Jn = J(n-1) + 2*J(n-2)
-    // Generate Jacobsthal numbers from J3 upward until exceeding m
-    if (m < 3) {
-        return;
-    }
-    long long prev2 = 1, prev1 = 1; 
-    long long jval;
-    // J3 and onward:
+    if (m < 3) return;
+    long long prev2 = 1;
+    long long prev1 = 1;
     while (true) {
-        jval = prev1 + 2 * prev2;
+        long long jval = prev1 + 2 * prev2;
         if (jval > m) break;
-        out.push_back((int)jval);
+        out.push_back(static_cast<int>(jval));
         prev2 = prev1;
         prev1 = jval;
     }
 }
 
 void PmergeMe::sortDeque(std::deque<int>& deq) {
-    // If 0 or 1 elements, already sorted
-    size_t n = deq.size();
-    if (n < 2) {
-        return;
-    }
-    if (n == 2) {
-        if (deq[0] > deq[1]) {
-            int tmp = deq[0];
-            deq[0] = deq[1];
-            deq[1] = tmp;
-        }
-        return;
-    }
-    // Separate straggler if count is odd
+    const size_t n = deq.size();
+    if (n < 2) return;
+    if (n == 2) { if (deq[0] > deq[1]) std::swap(deq[0], deq[1]); return; }
+
     bool hasStraggler = (deq.size() % 2 != 0);
     int straggler = 0;
-    if (hasStraggler) {
-        straggler = deq.back();
-        deq.pop_back();
-    }
-    // Pair up the remaining elements
+    if (hasStraggler) { straggler = deq.back(); deq.pop_back(); }
+
     std::deque<PairInt> pairs;
     while (deq.size() >= 2) {
-        int first = deq.front();
-        deq.pop_front();
-        int second = deq.front();
-        deq.pop_front();
-        if (first < second) {
-            pairs.push_back(PairInt(second, first));
-        } else {
-            pairs.push_back(PairInt(first, second));
-        }
+        int a = deq.front(); deq.pop_front();
+        int b = deq.front(); deq.pop_front();
+        if (a < b) pairs.push_back(PairInt(b, a));
+        else       pairs.push_back(PairInt(a, b));
     }
-    // Sort the pairs by the larger value (big) using insertion sort
+
     for (size_t i = 1; i < pairs.size(); ++i) {
         PairInt key = pairs[i];
         size_t j = i;
@@ -63,43 +52,39 @@ void PmergeMe::sortDeque(std::deque<int>& deq) {
         }
         pairs[j] = key;
     }
-    // Build the main chain (sorted bigs) and pend (smalls) sequences
-    std::deque<int> mainChain;
-    std::deque<int> pend;
+
+    std::deque<int> mainChain, pend;
     for (size_t k = 0; k < pairs.size(); ++k) {
         mainChain.push_back(pairs[k].big);
         pend.push_back(pairs[k].small);
     }
-    // Insert the first small element at the beginning of mainChain
-    if (!pend.empty()) {
-        mainChain.push_front(pend.front());
-        // Mark index 1 as used (but do not remove from pend to preserve indexing)
-    }
-    // Generate Jacobsthal sequence indices for insertion order
+
+    if (!pend.empty()) mainChain.push_front(pend.front());
+
     std::deque<int> jacob;
-    generateJacobsthalIndices(pend.size(), jacob);
-    // Mark used indices (1-indexed) for pend; index 1 is already used
-    int m = (int)pend.size();
+    generateJacobsthalIndices(static_cast<int>(pend.size()), jacob);
+
+    int m = static_cast<int>(pend.size());
     if (m > 0) {
         std::vector<bool> used(m + 1, false);
         used[1] = true;
-        // Insert elements at Jacobsthal sequence positions (and their predecessors)
+
         for (size_t t = 0; t < jacob.size(); ++t) {
             int jIndex = jacob[t];
             if (jIndex <= m && !used[jIndex]) {
-                int valJ = pend[jIndex - 1];
-                std::deque<int>::iterator pos = std::upper_bound(mainChain.begin(), mainChain.end(), valJ);
-                mainChain.insert(pos, valJ);
+                int v = pend[jIndex - 1];
+                std::deque<int>::iterator pos = std::upper_bound(mainChain.begin(), mainChain.end(), v);
+                mainChain.insert(pos, v);
                 used[jIndex] = true;
+
                 if (jIndex - 1 >= 1 && !used[jIndex - 1]) {
-                    int valJm1 = pend[jIndex - 2];
-                    pos = std::upper_bound(mainChain.begin(), mainChain.end(), valJm1);
-                    mainChain.insert(pos, valJm1);
+                    int w = pend[jIndex - 2];
+                    pos = std::upper_bound(mainChain.begin(), mainChain.end(), w);
+                    mainChain.insert(pos, w);
                     used[jIndex - 1] = true;
                 }
             }
         }
-        // Insert any remaining small elements in descending order of their indices
         for (int idx = m; idx >= 1; --idx) {
             if (!used[idx]) {
                 int value = pend[idx - 1];
@@ -109,54 +94,37 @@ void PmergeMe::sortDeque(std::deque<int>& deq) {
             }
         }
     }
-    // Insert the straggler (unpaired element) into the sorted main chain
+
     if (hasStraggler) {
         std::deque<int>::iterator pos = std::upper_bound(mainChain.begin(), mainChain.end(), straggler);
         mainChain.insert(pos, straggler);
     }
-    // Transfer the sorted sequence back to the original deque
+
     deq.assign(mainChain.begin(), mainChain.end());
 }
 
 void PmergeMe::sortList(std::list<int>& lst) {
-    // If 0 or 1 elements, already sorted
-    size_t n = lst.size();
-    if (n < 2) {
-        return;
-    }
+    const size_t n = lst.size();
+    if (n < 2) return;
     if (n == 2) {
         std::list<int>::iterator it = lst.begin();
-        int a = *it;
-        int b = *(++it);
-        if (a > b) {
-            // Swap the two elements
-            lst.clear();
-            lst.push_back(b);
-            lst.push_back(a);
-        }
+        int a = *it; ++it; int b = *it;
+        if (a > b) { lst.clear(); lst.push_back(b); lst.push_back(a); }
         return;
     }
-    // Separate straggler if count is odd
+
     bool hasStraggler = (lst.size() % 2 != 0);
     int straggler = 0;
-    if (hasStraggler) {
-        straggler = lst.back();
-        lst.pop_back();
-    }
-    // Pair up the remaining elements
+    if (hasStraggler) { straggler = lst.back(); lst.pop_back(); }
+
     std::deque<PairInt> pairs;
     while (lst.size() >= 2) {
-        int first = lst.front();
-        lst.pop_front();
-        int second = lst.front();
-        lst.pop_front();
-        if (first < second) {
-            pairs.push_back(PairInt(second, first));
-        } else {
-            pairs.push_back(PairInt(first, second));
-        }
+        int a = lst.front(); lst.pop_front();
+        int b = lst.front(); lst.pop_front();
+        if (a < b) pairs.push_back(PairInt(b, a));
+        else       pairs.push_back(PairInt(a, b));
     }
-    // Sort pairs by the larger value using insertion sort
+
     for (size_t i = 1; i < pairs.size(); ++i) {
         PairInt key = pairs[i];
         size_t j = i;
@@ -166,36 +134,35 @@ void PmergeMe::sortList(std::list<int>& lst) {
         }
         pairs[j] = key;
     }
-    // Build main chain (list of bigs) and pend (deque of smalls)
+
     std::list<int> mainChain;
     std::deque<int> pend;
     for (size_t k = 0; k < pairs.size(); ++k) {
         mainChain.push_back(pairs[k].big);
         pend.push_back(pairs[k].small);
     }
-    // Insert the first small element at the beginning of mainChain
-    if (!pend.empty()) {
-        mainChain.push_front(pend.front());
-    }
-    // Generate Jacobsthal sequence indices
+    if (!pend.empty()) mainChain.push_front(pend.front());
+
     std::deque<int> jacob;
-    generateJacobsthalIndices(pend.size(), jacob);
-    // Mark used indices and perform insertion according to sequence
-    int m = (int)pend.size();
+    generateJacobsthalIndices(static_cast<int>(pend.size()), jacob);
+
+    int m = static_cast<int>(pend.size());
     if (m > 0) {
         std::vector<bool> used(m + 1, false);
         used[1] = true;
+
         for (size_t t = 0; t < jacob.size(); ++t) {
             int jIndex = jacob[t];
             if (jIndex <= m && !used[jIndex]) {
-                int valJ = pend[jIndex - 1];
-                std::list<int>::iterator pos = std::upper_bound(mainChain.begin(), mainChain.end(), valJ);
-                mainChain.insert(pos, valJ);
+                int v = pend[jIndex - 1];
+                std::list<int>::iterator pos = std::upper_bound(mainChain.begin(), mainChain.end(), v);
+                mainChain.insert(pos, v);
                 used[jIndex] = true;
+
                 if (jIndex - 1 >= 1 && !used[jIndex - 1]) {
-                    int valJm1 = pend[jIndex - 2];
-                    pos = std::upper_bound(mainChain.begin(), mainChain.end(), valJm1);
-                    mainChain.insert(pos, valJm1);
+                    int w = pend[jIndex - 2];
+                    pos = std::upper_bound(mainChain.begin(), mainChain.end(), w);
+                    mainChain.insert(pos, w);
                     used[jIndex - 1] = true;
                 }
             }
@@ -209,12 +176,12 @@ void PmergeMe::sortList(std::list<int>& lst) {
             }
         }
     }
-    // Insert straggler into main chain
+
     if (hasStraggler) {
         std::list<int>::iterator pos = std::upper_bound(mainChain.begin(), mainChain.end(), straggler);
         mainChain.insert(pos, straggler);
     }
-    // Transfer sorted sequence back to the original list
+
     lst.assign(mainChain.begin(), mainChain.end());
 }
 

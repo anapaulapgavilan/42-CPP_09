@@ -1,29 +1,40 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.cpp                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ana-pper <ana-pper@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/11 16:05:02 by ana-pper          #+#    #+#             */
+/*   Updated: 2025/09/11 16:10:38 by ana-pper         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "RPN.hpp"
 
-static int error_str(const std::string& msg)
+static int print_error()
 {
-    std::cerr << ERROR_MSG_PREFIX << msg << std::endl;
+    std::cerr << "Error" << std::endl;
     return EXIT_FAILURE;
 }
 
 int main(int argc, char** argv)
 {
     if (argc != 2)
-        return error_str(ARGC_ERR);
+        return print_error();
 
-    std::string str(argv[1]);
-    if (!RPN::valid_expression(str))
-        return error_str(INVALID_EXPR_ERR);
+    std::string expr(argv[1]);
+    if (!RPN::valid_expression(expr))
+        return print_error();
 
     try 
     {
-        long long result = RPN::calculate(str);
+        long long result = RPN::calculate(expr);
         std::cout << result << std::endl;
     }
-    catch (const std::exception& e) 
+    catch (const std::exception&)
     {
-        std::cerr << e.what() << std::endl;
-        return EXIT_FAILURE;
+        return print_error();
     }
 
     return EXIT_SUCCESS;
