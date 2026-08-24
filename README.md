@@ -1,5 +1,7 @@
 ﻿# CPP_09
 
+![42](https://img.shields.io/badge/42-School-000000?style=flat-square&logo=42&logoColor=white) ![Language](https://img.shields.io/badge/lang-C++98-blue?style=flat-square) ![Status](https://img.shields.io/badge/status-completed-success?style=flat-square)
+
 Modulo C++ 09 de 42: ejercicios avanzados usando STL.
 
 ## Stack
