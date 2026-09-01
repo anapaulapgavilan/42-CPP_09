@@ -25,6 +25,16 @@ It evaluates the ability to pick and combine appropriate STL containers/algorith
 - Primary language: C++98
 - Scope: one repository per project
 
+## Skills Demonstrated
+
+`STL algorithms` | `Parsing and validation` | `Algorithmic complexity`
+
+## Features
+
+- BitcoinExchange: date-validated CSV lookups against a historical rate database
+- RPN evaluator for Reverse Polish Notation expressions
+- PmergeMe: Ford-Johnson merge-insertion sort compared across two STL containers
+
 ## Structure
 
 | Exercise | Path | Binary |
