@@ -35,6 +35,12 @@ It evaluates the ability to pick and combine appropriate STL containers/algorith
 - RPN evaluator for Reverse Polish Notation expressions
 - PmergeMe: Ford-Johnson merge-insertion sort compared across two STL containers
 
+## Review Focus
+
+- Look for robust input validation across dates, arithmetic expressions, and integer sequences.
+- Review container choice and performance comparison in PmergeMe.
+- Notice how each exercise turns STL knowledge into a practical command-line data tool.
+
 ## Structure
 
 | Exercise | Path | Binary |
