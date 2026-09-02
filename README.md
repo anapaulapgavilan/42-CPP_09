@@ -41,6 +41,18 @@ It evaluates the ability to pick and combine appropriate STL containers/algorith
 - Review container choice and performance comparison in PmergeMe.
 - Notice how each exercise turns STL knowledge into a practical command-line data tool.
 
+## Project Deep Dive
+
+CPP_09 applies STL knowledge to three practical command-line problems: historical exchange lookup, RPN expression evaluation, and merge-insertion sorting. The module is less about syntax and more about choosing data structures that match the problem.
+
+The PmergeMe exercise is the most algorithmic: it compares behavior across containers while implementing a non-trivial sorting strategy. That gives reviewers a place to inspect parsing, complexity awareness, and measurable performance differences.
+
+## Implementation Notes
+
+- Validates dates, numeric ranges, and malformed input before producing exchange results.
+- Evaluates stack-based arithmetic through Reverse Polish Notation.
+- Compares algorithm behavior across different STL containers in the Ford-Johnson sorting exercise.
+
 ## Structure
 
 | Exercise | Path | Binary |
